@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AllClearButton from '../AllClearButton';
 import ClearButton from '../ClearButton';
 import NumberButton from '../NumberButton';
@@ -6,6 +6,7 @@ import OperatorButton from '../OperatorButton';
 import EqualButton from '../EqualButton';
 import NormalButton from '../NormalButton';
 import styled from 'styled-components';
+import { ExpressionUpdateContext } from '../ExpressionProvider';
 
 const OuterContainer = styled.div``;
 
@@ -22,17 +23,26 @@ const NumberButtonItem = styled(NumberButton)`
 
 const InputArea = () => {
 	const numberButtonItemList = [...new Array(10)].map((_, index) => (
-		<NumberButtonItem key={index} value={index}>{index}</NumberButtonItem>
+		<NumberButtonItem key={index} value={index}>
+			{index}
+		</NumberButtonItem>
 	));
+
+	const { clear, allClear, append } = useContext(ExpressionUpdateContext);
+
 	return (
 		<OuterContainer>
 			<Container>
 				{numberButtonItemList}
-				<OperatorButton value={'+'}>+</OperatorButton>
-				<OperatorButton value={'*'}>x</OperatorButton>
-				<AllClearButton />
+				<OperatorButton value={'+'} append={append}>
+					+
+				</OperatorButton>
+				<OperatorButton value={'*'} append={append}>
+					x
+				</OperatorButton>
+				<AllClearButton allClear={allClear} />
 				<EqualButton />
-				<ClearButton />
+				<ClearButton clear={clear} />
 			</Container>
 		</OuterContainer>
 	);
