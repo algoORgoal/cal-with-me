@@ -34,15 +34,11 @@ const InputArea = () => {
 		<OuterContainer>
 			<Container>
 				{numberButtonItemList}
-				<OperatorButton value={'+'} append={append}>
-					+
-				</OperatorButton>
-				<OperatorButton value={'*'} append={append}>
-					x
-				</OperatorButton>
-				<AllClearButton allClear={allClear} />
+				<OperatorButton value={'+'}>+</OperatorButton>
+				<OperatorButton value={'*'}>x</OperatorButton>
+				<AllClearButton />
 				<EqualButton />
-				<ClearButton clear={clear} />
+				<ClearButton />
 			</Container>
 		</OuterContainer>
 	);
