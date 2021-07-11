@@ -5,11 +5,13 @@ export const ExpressionContext = createContext(null);
 export const ExpressionUpdateContext = createContext(null);
 
 const ExpressionProvider = ({ children }) => {
-	const { expression, clear, allClear, append } = useExpression();
+	const { expression, clear, allClear, append, evaluate, updateOnceClicked } = useExpression();
 
 	return (
 		<ExpressionContext.Provider value={expression}>
-			<ExpressionUpdateContext.Provider value={{ clear, allClear, append }}>
+			<ExpressionUpdateContext.Provider
+				value={{ clear, allClear, append, evaluate, updateOnceClicked }}
+			>
 				{children}
 			</ExpressionUpdateContext.Provider>
 		</ExpressionContext.Provider>

@@ -34,8 +34,8 @@ const InputArea = () => {
 		<OuterContainer>
 			<Container>
 				{numberButtonItemList}
-				<OperatorButton operatorList={['+', '-']}>+</OperatorButton>
-				<OperatorButton operatorList={['*', '/']}>x</OperatorButton>
+				<OperatorButton operatorList={['+', '-']} />
+				<OperatorButton operatorList={['*', '/']} />
 				<AllClearButton />
 				<EqualButton />
 				<ClearButton />
