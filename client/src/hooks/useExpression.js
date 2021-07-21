@@ -5,70 +5,107 @@ const EMPTY_STRING = '';
 const DIGIT_LIST = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 const useExpression = () => {
-	const [expression, setExpression] = useState(EMPTY_STRING);
-	const [isOperatorAppended, setIsOperatorAppended] = useState(false);
+    const [expression, setExpression] = useState([]);
+    const [isOperatorAppended, setIsOperatorAppended] = useState(false);
+    console.log(isOperatorAppended);
 
-	const clear = () => {
-		if (expression.length > 0) {
-			setExpression((previousExpression) =>
-				previousExpression.slice(0, previousExpression.length - 1)
-			);
-		}
-		setIsOperatorAppended(false);
-	};
+    const clear = () => {
+        const expressionLength = expression.length;
 
-	const allClear = () => {
-		setExpression('');
-		setIsOperatorAppended(false);
-	};
+        if (expressionLength > 0) {
+            const lastIndex = expressionLength - 1;
+            const lastTerm = expression[lastIndex];
+            const lastTermLength = lastTerm.length;
 
-	const append = (character) => {
-		OPERATOR_LIST.map((OPERATOR) => {
-			if (character === OPERATOR && expression.length > 0) {
-				// append operator only when the last value given is a number
-				const lastValue = expression.slice(expression.length - 1);
-				DIGIT_LIST.map(
-					(DIGIT) =>
-						DIGIT === lastValue &&
-						(setExpression((previousExpression) =>
-							previousExpression.concat(character)
-						),
-						setIsOperatorAppended(true))
-				);
-			}
-		});
+            if (lastTermLength > 1) {
+                const lastTrimmedTerm = lastTerm.slice(0, lastTermLength - 1);
+                setExpression((previousExpression) =>
+                    previousExpression.slice(0, expressionLength - 1).concat(lastTrimmedTerm)
+                );
+            } else {
+                setExpression((previousExpression) =>
+                    previousExpression.slice(0, expressionLength - 1)
+                );
+            }
+        }
 
-		DIGIT_LIST.map(
-			(DIGIT) =>
-				character === DIGIT &&
-				(setExpression((previousExpression) => previousExpression.concat(character)),
-				setIsOperatorAppended(false))
-		);
-	};
+        setIsOperatorAppended(false);
+    };
 
-	const updateLastOperator = (operatorList) => {
-		const [removedExpression, lastOperator] = [
-			expression.slice(0, expression.length - 1),
-			expression.slice(expression.length - 1),
-		];
+    const allClear = () => {
+        setExpression('');
+        setIsOperatorAppended(false);
+    };
 
-		operatorList.map((operator, index) => {
-			if (lastOperator === operator) {
-				const nextIndex = (index + 1) % operatorList.length;
-				const nextOperator = operatorList[nextIndex];
+    const append = (character) => {
+        const expressionLength = expression.length;
+        // lastTerm is number, character is number => append to lastTerm
+        // lastTerm is number, character is operator => append to expression and set IsOperatorAppend to true
+        // lastTerm is operator, character is number => append to expression and set IsOperatorAppend to false
+        // lastTerm is operator, character is operator => invalid input, ignored
+        const lastTerm = expression[expressionLength - 1];
 
-				setExpression(removedExpression.concat(nextOperator));
-			}
-		});
-	};
+        if (Number(lastTerm) ^ Number(character)) {
+            setExpression((previousExpression) => previousExpression.concat(character));
+            const isCharacterOperator = !Number(character);
+            setIsOperatorAppended(isCharacterOperator);
+        }
+        if (Number(character) && Number(lastTerm)) {
+            const lastTermAppended = lastTerm.concat(character);
+            setExpression((previousExpression) =>
+                previousExpression.slice(0, expressionLength - 1).concat(lastTermAppended)
+            );
+        }
 
-	const updateOnceClicked = (operatorList) =>
-		isOperatorAppended && updateLastOperator(operatorList);
-	
-	// eval function generates an error for a invalid expression such as: 1+
-	const evaluate = () => expression;
+        // OPERATOR_LIST.map((OPERATOR) => {
+        //     if (character === OPERATOR && expression.length > 0) {
+        //         // append operator only when the last value given is a number
+        //         const lastValue = expression.slice(expression.length - 1);
+        //         DIGIT_LIST.map(
+        //             (DIGIT) =>
+        //                 DIGIT === lastValue &&
+        //                 (setExpression((previousExpression) =>
+        //                     previousExpression.concat(character)
+        //                 ),
+        //                 setIsOperatorAppended(true))
+        //         );
+        //     }
+        // });
 
-	return { expression, clear, allClear, append, evaluate, updateOnceClicked };
+        //DIGIT_LIST.DIGIT_LIST.map(
+        //  (DIGIT) =>
+        //    character === DIGIT &&
+        //  (setExpression((previousExpression) => previousExpression.concat(character)),
+        //setIsOperatorAppended(false))
+        //);
+    };
+
+    const updateLastOperator = (operatorList) => {
+        const expressionLength = expression.length;
+        console.log(expression);
+        const [removedExpression, lastOperator] = [
+            expression.slice(0, expression.length - 1),
+            expression[expressionLength - 1],
+        ];
+
+        operatorList.map((operator, index) => {
+            if (lastOperator === operator) {
+                const nextIndex = (index + 1) % operatorList.length;
+                const nextOperator = operatorList[nextIndex];
+                console.log(nextOperator);
+
+                setExpression(removedExpression.concat(nextOperator));
+            }
+        });
+    };
+
+    const updateOnceClicked = (operatorList) =>
+        isOperatorAppended && updateLastOperator(operatorList);
+
+    // eval function generates an error for a invalid expression such as: 1+
+    const evaluate = () => expression;
+
+    return { expression, clear, allClear, append, evaluate, updateOnceClicked };
 };
 
 export default useExpression;

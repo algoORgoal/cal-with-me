@@ -5,24 +5,23 @@ import useExpression from '../../hooks/useExpression';
 import { useExpressionContext, useExpressionUpdateContext } from '../../hooks/useExpressionContext';
 
 const Container = styled.div`
-	text-align: center;
+    text-align: center;
 `;
 
 const OutputArea = () => {
-	const expression = useExpressionContext();
-	const { evaluate } = useExpressionUpdateContext();
-	console.log(evaluate);
+    const expression = useExpressionContext();
+    const { evaluate } = useExpressionUpdateContext();
 
-	return (
-		<Container>
-			<h3>
-				<Text>{expression}</Text>
-			</h3>
-			<h4>
-				<Text>{eval(expression)}</Text>
-			</h4>
-		</Container>
-	);
+    return (
+        <Container>
+            <h3>
+                <Text>{expression}</Text>
+            </h3>
+            <h4>
+                <Text>{}</Text>
+            </h4>
+        </Container>
+    );
 };
 
 export default OutputArea;
