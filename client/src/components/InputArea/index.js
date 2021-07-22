@@ -11,37 +11,37 @@ import { ExpressionUpdateContext } from '../ExpressionProvider';
 const OuterContainer = styled.div``;
 
 const Container = styled.div`
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: repeat(5, 100px);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 100px);
 `;
 
 const NumberButtonItem = styled(NumberButton)`
-	grid-row: ${(props) => props.children === 0 && 4};
-	grid-column: ${(props) => props.children === 0 && 2};
+    grid-row: ${(props) => props.children === 0 && 4};
+    grid-column: ${(props) => props.children === 0 && 2};
 `;
 
-const InputArea = () => {
-	const numberButtonItemList = [...new Array(10)].map((_, index) => (
-		<NumberButtonItem key={index} value={index}>
-			{index}
-		</NumberButtonItem>
-	));
+const InputArea = ({ updateResult }) => {
+    const numberButtonItemList = [...new Array(10)].map((_, index) => (
+        <NumberButtonItem key={index} value={index}>
+            {index}
+        </NumberButtonItem>
+    ));
 
-	const { clear, allClear, append } = useContext(ExpressionUpdateContext);
+    const { clear, allClear, append } = useContext(ExpressionUpdateContext);
 
-	return (
-		<OuterContainer>
-			<Container>
-				{numberButtonItemList}
-				<OperatorButton operatorList={['+', '-']} />
-				<OperatorButton operatorList={['*', '/']} />
-				<AllClearButton />
-				<EqualButton />
-				<ClearButton />
-			</Container>
-		</OuterContainer>
-	);
+    return (
+        <OuterContainer>
+            <Container>
+                {numberButtonItemList}
+                <OperatorButton operatorList={['+', '-']} />
+                <OperatorButton operatorList={['*', '/']} />
+                <AllClearButton />
+                <EqualButton updateResult={updateResult}/>
+                <ClearButton />
+            </Container>
+        </OuterContainer>
+    );
 };
 
 // Props of NumberButton === 0:

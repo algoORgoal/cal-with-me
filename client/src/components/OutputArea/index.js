@@ -8,7 +8,7 @@ const Container = styled.div`
     text-align: center;
 `;
 
-const OutputArea = () => {
+const OutputArea = ({ result }) => {
     const expression = useExpressionContext();
     const { evaluate } = useExpressionUpdateContext();
 
@@ -18,7 +18,7 @@ const OutputArea = () => {
                 <Text>{expression}</Text>
             </h3>
             <h4>
-                <Text>{}</Text>
+                <Text>{result}</Text>
             </h4>
         </Container>
     );
