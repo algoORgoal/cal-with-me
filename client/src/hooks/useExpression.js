@@ -30,7 +30,7 @@ const useExpression = () => {
     };
 
     const allClear = () => {
-        setExpression('');
+        setExpression([]);
         setIsOperatorAppended(false);
     };
 

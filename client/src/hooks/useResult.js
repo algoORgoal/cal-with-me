@@ -16,35 +16,41 @@ const useResult = () => {
 
     const calculate = (expression) => {
         const postfixExpression = generatePostfixExpression(expression);
-		console.log(postfixExpression)
+        console.log(postfixExpression);
         const stack = [];
 
+		
+		
         postfixExpression.map((element) => {
             if (!isStringOperator(element)) {
-                stack.push(element);
-            }
-            const [secondOperand, firstOperand] = [stack.pop(), stack.pop()];
+                stack.push(Number(element));
+            } else {
+                const [secondOperand, firstOperand] = [stack.pop(), stack.pop()];
 
-            switch (element) {
-                case ADD_OPERATOR:
-                    stack.push(Number(firstOperand) + Number(secondOperand));
-                    break;
-                case SUBTRACT_OPERATOR:
-                    stack.push(Number(firstOperand) - Number(secondOperand));
-                    break;
-                case MULTIPLY_OPERATOR:
-                    stack.push(Number(firstOperand) * Number(secondOperand));
-                    break;
-                case DIVIDE_OPERATOR:
-                    stack.push(Number(firstOperand) / Number(secondOperand));
-                    break;
-                default:
-                    console.error('operator is not valid');
+                switch (element) {
+                    case ADD_OPERATOR:
+                        stack.push(firstOperand + secondOperand);
+                        break;
+                    case SUBTRACT_OPERATOR:
+                        stack.push(firstOperand - secondOperand);
+                        break;
+                    case MULTIPLY_OPERATOR:
+                        stack.push(firstOperand * secondOperand);
+                        break;
+                    case DIVIDE_OPERATOR:
+                        stack.push(firstOperand / secondOperand);
+                        break;
+                    default:
+                        console.error('operator is not valid');
+                }
             }
+
+            console.log(element);
+            console.log(stack);
         });
-
+		
         const answer = stack.pop();
-
+		console.log(answer);
         setResult(answer);
     };
 
@@ -59,28 +65,31 @@ const useResult = () => {
 
         const stack = [];
         const postfixExpression = [];
-		
-		
-		// fix here...
+
         infixExpression.map((element) => {
-			console.log(postfixExpression);
-			console.log(stack);
             if (isStringOperator(element)) {
-                const top = stack[stack.length - 1];
+                let top = stack[stack.length - 1];
                 if (element === OPENING_BRACKET) {
                     stack.push(element);
                 } else if (element === CLOSING_BRACKET) {
                     while (top !== ')') {
                         postfixExpression.push(stack.pop());
+						top = stack[stack.length - 1];
                     }
                 } else if (OPERATOR_PRIORITY[element] > OPERATOR_PRIORITY[top]) {
                     stack.push(element);
-                }
+                } else {
+					while (stack.length && OPERATOR_PRIORITY[element] <= OPERATOR_PRIORITY[top]){
+						postfixExpression.push(stack.pop());	
+						top = (stack.length || null) && stack[stack.length - 1];
+					}
+	                    
+					stack.push(element);
+				}
 
-                while (OPERATOR_PRIORITY[element] < OPERATOR_PRIORITY[top])
-                    postfixExpression.push(stack.pop());
-
-                stack.push(element);
+    
+            } else {
+                postfixExpression.push(element);
             }
         });
 
