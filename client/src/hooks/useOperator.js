@@ -8,6 +8,7 @@ const useOperator = (operatorList) => {
 
 	const switchOperator = () => {
 		operatorList.reduce((isExcuted, operatorInList, index) => {
+			if (isExcuted) return true;
 			if (!isExcuted && operator === operatorInList) {
 				const nextIndex = (index + 1) % operatorList.length;
 				const nextOperator = operatorList[nextIndex];
