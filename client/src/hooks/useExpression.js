@@ -1,10 +1,16 @@
 import { useState } from 'react';
-import { EMPTY_STRING, DIGIT_LIST } from '../constants';
+import {
+    EMPTY_STRING,
+    DIGIT_LIST,
+    OPENING_BRACKET,
+    CLOSING_BRACKET,
+    OPERATOR_LIST,
+    ARITHMETIC_OPERATOR_LIST,
+} from '../constants';
 
 const useExpression = () => {
     const [expression, setExpression] = useState([]);
     const [isOperatorAppended, setIsOperatorAppended] = useState(false);
-    console.log(isOperatorAppended);
 
     const clear = () => {
         const expressionLength = expression.length;
@@ -36,50 +42,35 @@ const useExpression = () => {
 
     const append = (character) => {
         const expressionLength = expression.length;
-        // lastTerm is number, character is number => append to lastTerm
-        // lastTerm is number, character is operator => append to expression and set IsOperatorAppend to true
-        // lastTerm is operator, character is number => append to expression and set IsOperatorAppend to false
-        // lastTerm is operator, character is operator => invalid input, ignored
-        const lastTerm = expression[expressionLength - 1];
+        // character is parenthesis => append to expression(its validation is done in findValidParenthesis)
+        // lastElement is number, character is number => append to element
+        // lastElement is number, character is operator => append to expression and set IsOperatorAppend to true
+        // lastElement is operator, character is number => append to expression and set IsOperatorAppend to false
+        // lastElement is closing parenthesis and character is an arithmetic operator => append to element
+        // lastElement is operator, character is operator => invalid input, ignored
+        const lastElement = expression[expressionLength - 1];
 
-        if (Number(lastTerm) ^ Number(character)) {
+        if (character === OPENING_BRACKET || character === CLOSING_BRACKET) {
+            setExpression((previousExpression) => previousExpression.concat(character));
+        } else if (Number(lastElement) ^ Number(character)) {
             setExpression((previousExpression) => previousExpression.concat(character));
             const isCharacterOperator = !Number(character);
             setIsOperatorAppended(isCharacterOperator);
-        }
-        if (Number(character) && Number(lastTerm)) {
-            const lastTermAppended = lastTerm.concat(character);
+        } else if (
+            lastElement === CLOSING_BRACKET &&
+            isEveryCharacterInList(character)(ARITHMETIC_OPERATOR_LIST)()
+        ) {
+            setExpression((previousExpression) => previousExpression.concat(character));
+        } else if (Number(character) && Number(lastElement)) {
+            const lastTermAppended = lastElement.concat(character);
             setExpression((previousExpression) =>
                 previousExpression.slice(0, expressionLength - 1).concat(lastTermAppended)
             );
         }
-
-        // OPERATOR_LIST.map((OPERATOR) => {
-        //     if (character === OPERATOR && expression.length > 0) {
-        //         // append operator only when the last value given is a number
-        //         const lastValue = expression.slice(expression.length - 1);
-        //         DIGIT_LIST.map(
-        //             (DIGIT) =>
-        //                 DIGIT === lastValue &&
-        //                 (setExpression((previousExpression) =>
-        //                     previousExpression.concat(character)
-        //                 ),
-        //                 setIsOperatorAppended(true))
-        //         );
-        //     }
-        // });
-
-        //DIGIT_LIST.DIGIT_LIST.map(
-        //  (DIGIT) =>
-        //    character === DIGIT &&
-        //  (setExpression((previousExpression) => previousExpression.concat(character)),
-        //setIsOperatorAppended(false))
-        //);
     };
 
     const updateLastOperator = (operatorList) => {
         const expressionLength = expression.length;
-        console.log(expression);
         const [removedExpression, lastOperator] = [
             expression.slice(0, expression.length - 1),
             expression[expressionLength - 1],
@@ -99,10 +90,62 @@ const useExpression = () => {
     const updateOnceClicked = (operatorList) =>
         isOperatorAppended && updateLastOperator(operatorList);
 
-    // eval function generates an error for a invalid expression such as: 1+
-    const evaluate = () => expression;
+    const calculateNestingLevel = () =>
+        expression.reduce((accumulator, currentCharacter) => {
+            if (currentCharacter === OPENING_BRACKET) {
+                return accumulator + 1;
+            } else if (currentCharacter === CLOSING_BRACKET) {
+                return accumulator - 1;
+            }
+            return accumulator;
+        }, 0);
 
-    return { expression, clear, allClear, append, evaluate, updateOnceClicked };
+    const findValidParenthesis = () => {
+        const lastElement = expression[expression.length - 1]; // set to undefined when empty
+        const isLastElementInList = isEveryCharacterInList(lastElement);
+
+        if (
+            !expression.length ||
+            isLastElementInList(OPERATOR_LIST)((character) => character !== CLOSING_BRACKET)
+        ) {
+            return OPENING_BRACKET;
+        } else if (
+            isLastElementInList(DIGIT_LIST.concat(CLOSING_BRACKET))() &&
+            countNestingLevel()
+        ) {
+            return CLOSING_BRACKET;
+        }
+        return EMPTY_STRING;
+    };
+
+    const countNestingLevel = () => {
+        return expression.reduce((accumulator, currentElement) => {
+            if (currentElement === OPENING_BRACKET) return accumulator + 1;
+            else if (currentElement === CLOSING_BRACKET) return accumulator - 1;
+            return accumulator;
+        }, 0);
+    };
+
+    const isEveryCharacterInList = (string) => (list) => (filterFunc) =>
+        string
+            .split('')
+            .every((character) =>
+                list.some(
+                    (element) => (!filterFunc || filterFunc(character)) && character === element
+                )
+            );
+
+    const evaluate = () => {};
+
+    return {
+        expression,
+        clear,
+        allClear,
+        append,
+        evaluate,
+        updateOnceClicked,
+        findValidParenthesis,
+    };
 };
 
 export default useExpression;

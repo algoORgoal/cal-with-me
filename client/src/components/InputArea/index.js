@@ -7,6 +7,7 @@ import EqualButton from '../EqualButton';
 import NormalButton from '../NormalButton';
 import styled from 'styled-components';
 import { ExpressionUpdateContext } from '../ExpressionProvider';
+import ParenthesisButton from '../ParenthesisButton'
 
 const OuterContainer = styled.div``;
 
@@ -28,7 +29,7 @@ const InputArea = ({ updateResult }) => {
         </NumberButtonItem>
     ));
 
-    const { clear, allClear, append } = useContext(ExpressionUpdateContext);
+    const { clear, allClear, append, findValidParenthesis } = useContext(ExpressionUpdateContext);
 
     return (
         <OuterContainer>
@@ -39,6 +40,7 @@ const InputArea = ({ updateResult }) => {
                 <AllClearButton />
                 <EqualButton updateResult={updateResult}/>
                 <ClearButton />
+				{findValidParenthesis() && <ParenthesisButton operatorList={['(', ')']} text={'()'}/>}
             </Container>
         </OuterContainer>
     );

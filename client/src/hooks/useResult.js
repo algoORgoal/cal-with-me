@@ -60,26 +60,28 @@ const useResult = () => {
         // if operator is '(', push it to stack and return
         // if operator is ')', pop operator in stack until it runs into '(' and return
         // if operator has higher priority than the last one in stack, push it to stack and return
-        // while operator has lower priority than the last one in stack, push the last one to stack
-        // when the procedure is over, pop all the operators in stack
+        // while operator has lower priority than the last one in stack, pop the top operator in stack
+        // when the procedure is over, push element to stack
 
         const stack = [];
         const postfixExpression = [];
 
         infixExpression.map((element) => {
             if (isStringOperator(element)) {
-                let top = stack[stack.length - 1];
+                let top = stack[stack.length - 1] || null;
                 if (element === OPENING_BRACKET) {
                     stack.push(element);
                 } else if (element === CLOSING_BRACKET) {
-                    while (top !== ')') {
+                    while (top !== '(') {
                         postfixExpression.push(stack.pop());
 						top = stack[stack.length - 1];
                     }
+					
+					stack.pop(); // pop OPENING PARENTHESIS
                 } else if (OPERATOR_PRIORITY[element] > OPERATOR_PRIORITY[top]) {
                     stack.push(element);
                 } else {
-					while (stack.length && OPERATOR_PRIORITY[element] <= OPERATOR_PRIORITY[top]){
+					while (top && OPERATOR_PRIORITY[element] <= OPERATOR_PRIORITY[top]){
 						postfixExpression.push(stack.pop());	
 						top = (stack.length || null) && stack[stack.length - 1];
 					}

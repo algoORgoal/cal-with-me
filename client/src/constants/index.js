@@ -7,6 +7,7 @@ export const OPERATOR_PRIORITY = {
     '*': 2,
     '/': 2,
 };
+export const ARITHMETIC_OPERATOR_LIST = ['+', '-', '*', '/'];
 export const ADD_OPERATOR = '+';
 export const SUBTRACT_OPERATOR = '-';
 export const MULTIPLY_OPERATOR = '*';
